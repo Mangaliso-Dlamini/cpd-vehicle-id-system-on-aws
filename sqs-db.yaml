@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create SQS queue and DynamoDB tables
+
+Parameters:
+  SQSQueueName:
+    Type: String
+    Default: SQS_S2110978
+
+Resources:
+  MySQSQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref SQSQueueName
+
+  ImageEntryTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: entries_S2110978
+      AttributeDefinitions:
+        - AttributeName: image_name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: image_name
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  VehicleTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: vehicles_S2110978
+      AttributeDefinitions:
+        - AttributeName: license_no
+          AttributeType: S
+      KeySchema:
+        - AttributeName: license_no
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  SQSQueueURL:
+    Description: URL of the created SQS queue
+    Value: !GetAtt MySQSQueue.QueueUrl
+  
+  SQSQueueARN:
+    Description: The ARN of the SQS queue
+    Value: !GetAtt MySQSQueue.Arn
+
+  ImageEntryTableArn:
+    Description: ARN of the ImageEntryTable
+    Value: !GetAtt ImageEntryTable.Arn
+
+  VehicleTableArn:
+    Description: ARN of the VehicleTable
+    Value: !GetAtt VehicleTable.Arn
